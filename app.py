@@ -32,7 +32,7 @@ def dict_to_csv(data, filename, append=False):
 
 # Function to Combine policy based on Topic 
 def combine_policy(df):
-    grouped_df = df.groupby('Topic')['Policy'].apply(lambda x: ' '.join(x)).reset_index()
+    grouped_df = df.groupby('L1 topic')['Policy'].apply(lambda x: ' '.join(x)).reset_index()
     grouped_df.rename(columns={'Policy': 'Policies'}, inplace=True)
     grouped_df.to_csv('grouped.csv', index=False)
     return grouped_df
@@ -66,7 +66,7 @@ def policy_generator(df):
     format_instructions = output_parser.get_format_instructions()
     
     title_template = """ \ You are an AI Governance bot. Just Execute the set of steps one by one.
-                Convert "{topic}" into policy statements in 10 words.
+                Convert "{topic}" into policy statements in maximum 10 to 15 words.
                 {format_instructions}
                 """ 
     prompt = ChatPromptTemplate.from_template(template=title_template)
@@ -95,7 +95,7 @@ def summary_generator(df):
     format_instructions = output_parser.get_format_instructions()
     
     title_template = """ \ You are an AI Governance bot.  
-                    Summarize "{topic}" as instructional policy paragraph in {count} Words In Legal Language Style. 
+                    Summarize "{topic}" as instructional policy paragraph in {count} Words In Legal Language Style.
                      {format_instructions}          
                 """ 
     prompt = ChatPromptTemplate.from_template(template=title_template)
@@ -164,7 +164,7 @@ def main():
             policy_generator(pd.read_csv("process_result.csv"))
             
         if st.button("Summary Generation"):
-            summary_generator(pd.read_csv('policy_result.csv', usecols=['Policy', 'Topic']))
+            summary_generator(pd.read_csv('policy_result.csv', usecols=['Policy', 'L1 topic']))
             
         if st.button("Policy Document Generation"):
             document_generator(pd.read_csv("summary_result.csv"))
